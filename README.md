@@ -36,8 +36,8 @@ Make sure you have the following installed on your machine:
 ### Database Setup
 1. Create a `.env` file in the root directory and add the following:
    ```sh
-   DATABASE_URL="mysql://user:password@localhost:3306/todo_db"
-   PORT=5000
+   DATABASE_URL="mysql://user:password@localhost:3306/todo_db" #enter your database url
+   PORT=8080
    ```
 2. Define your database schema in `prisma/schema.prisma`:
    ```prisma
@@ -54,7 +54,7 @@ Make sure you have the following installed on your machine:
      id        Int     @id @default(autoincrement())
      title     String
      completed Boolean @default(false)
-     createdAt DateTime @default(now())
+     color   String
    }
    ```
 3. Run Prisma migrations:
@@ -64,33 +64,6 @@ Make sure you have the following installed on your machine:
 4. Generate Prisma client:
    ```sh
    npx prisma generate
-   ```
-
-### Express.js Setup
-1. Create a basic Express server in `src/index.ts`:
-   ```ts
-   import express from "express";
-   import cors from "cors";
-   import { PrismaClient } from "@prisma/client";
-
-   const app = express();
-   const prisma = new PrismaClient();
-
-   app.use(cors());
-   app.use(express.json());
-
-   app.get("/api/todos", async (req, res) => {
-     const todos = await prisma.todo.findMany();
-     res.json(todos);
-   });
-
-   app.post("/api/todos", async (req, res) => {
-     const { title } = req.body;
-     const todo = await prisma.todo.create({ data: { title } });
-     res.json(todo);
-   });
-
-   app.listen(5000, () => console.log("Server running on port 5000"));
    ```
 
 ### Running the Server
@@ -105,26 +78,19 @@ The server will start on `http://localhost:5000`.
 ### Project Structure
 ```
 Backend_todo/
-├── src/
-│   ├── controllers/   # Route controllers
-│   ├── routes/        # API routes
-│   ├── prisma/        # Database setup
-│   ├── middleware/    # Middleware functions
-│   ├── index.ts       # Main server file
+
+├── controllers/   # Route controllers
+│          ├── todo.controller.js
+├── route/        # API routes
+│          ├── todoRoutes.js      
+├── server.js     # main server file
 ├── prisma/
-│   ├── migrations/    # Prisma migrations
-│   ├── schema.prisma  # Prisma schema
+│          ├── migrations/    # Prisma migrations
+│          ├── schema.prisma  # Prisma schema
 ├── .env               # Environment variables
 ├── package.json       # Dependencies
 ├── tsconfig.json      # TypeScript configuration
 └── README.md          # Documentation
 ```
 
-### Deployment
-To deploy, use platforms like **Heroku** or **Railway**. Example for Railway:
-```sh
-railway up
-```
 
-### License
-This project is licensed under the MIT License.
